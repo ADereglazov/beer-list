@@ -124,10 +124,6 @@ export default {
   text-align: center;
 }
 
-.beer__wrapper {
-  position: relative;
-}
-
 .beer__list {
   display: flex;
   flex-wrap: wrap;
@@ -138,6 +134,7 @@ export default {
 }
 
 .beer__item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

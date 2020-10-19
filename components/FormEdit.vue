@@ -76,7 +76,7 @@ export default {
   padding: 20px;
   position: absolute;
   z-index: 10;
-  top: 0;
+  top: 30px;
   left: 0;
   background-color: #fff;
   box-shadow: 0 7px 15px 0 rgba(0, 1, 1, 0.15);
