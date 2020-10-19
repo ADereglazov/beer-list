@@ -9,7 +9,7 @@
             <FormEdit
               :name="item.name"
               :description="item.description"
-              @input-name="handleInputName($event, index, beerList)"
+              @input-name="handleInputName($event, index)"
               @input-description="handleInputDescription($event, index)"
             />
             <button
@@ -31,7 +31,7 @@
         />
       </LoaderWrapper>
     </div>
-    <span v-else-if="isError">Oops... no data found</span>
+    <span v-else-if="isError">Oops... Error occured</span>
   </div>
 </template>
 
@@ -40,15 +40,12 @@ import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
 import FormEdit from '~/components/FormEdit'
 
-const FIRST_PAGE_NUMBER = 1
 const BEER_ITEMS_LIMIT = 25
 
 export default {
   components: { FormEdit, ButtonLoader, LoaderWrapper },
   data() {
     return {
-      page: FIRST_PAGE_NUMBER,
-      limit: BEER_ITEMS_LIMIT,
       beerList: [],
       beerCount: 0,
       beerOffset: 0,
@@ -62,22 +59,19 @@ export default {
     },
   },
   mounted() {
-    this.getData({
-      page: FIRST_PAGE_NUMBER,
-      limit: BEER_ITEMS_LIMIT,
-    })
+    this.getData()
   },
   methods: {
-    getData(params) {
+    getData() {
+      const page = Math.trunc(this.beerOffset / BEER_ITEMS_LIMIT) + 1
+      const params = { page, limit: BEER_ITEMS_LIMIT }
       this.isPendingBeerList = true
       return this.$axios
         .$get('https://api.punkapi.com/v2/beers', { params })
         .then((response) => {
-          const count = response.length
           this.beerList.push(...response)
-          this.beerCount += count
-          this.beerOffset += this.limit
-          this.page++
+          this.beerCount += response.length
+          this.beerOffset += BEER_ITEMS_LIMIT
         })
         .catch(() => {
           this.isError = true
@@ -87,19 +81,16 @@ export default {
         })
     },
     handleShowNextClick() {
-      this.getData({
-        page: this.page,
-        limit: this.limit,
-      })
+      this.getData()
     },
     handleDeleteItem(index) {
       this.beerList.splice(index, 1)
     },
-    handleInputName(value, indexOfItem) {
-      this.beerList[indexOfItem].name = value
+    handleInputName(value, index) {
+      this.beerList[index].name = value
     },
-    handleInputDescription(value, indexOfItem) {
-      this.beerList[indexOfItem].description = value
+    handleInputDescription(value, index) {
+      this.beerList[index].description = value
     },
   },
 }
