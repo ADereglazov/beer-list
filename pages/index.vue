@@ -9,8 +9,8 @@
             <FormEdit
               :name="item.name"
               :description="item.description"
-              @input-name="handleInputName"
-              @input-description="handleInputDescription"
+              @input-name="handleInputName($event, index, beerList)"
+              @input-description="handleInputDescription($event, index)"
             />
             <button
               class="beer__button"
@@ -39,7 +39,6 @@
 import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
 import FormEdit from '~/components/FormEdit'
-// import FormContainer from '~/components/FormContainer'
 
 const FIRST_PAGE_NUMBER = 1
 const BEER_ITEMS_LIMIT = 25
@@ -96,11 +95,11 @@ export default {
     handleDeleteItem(index) {
       this.beerList.splice(index, 1)
     },
-    handleInputName(value) {
-      console.log('>>>>>>>>>>>>>>>', value)
+    handleInputName(value, indexOfItem) {
+      this.beerList[indexOfItem].name = value
     },
-    handleInputDescription(value) {
-      console.log('>>>>>>>>>>>>>>>', value)
+    handleInputDescription(value, indexOfItem) {
+      this.beerList[indexOfItem].description = value
     },
   },
 }
