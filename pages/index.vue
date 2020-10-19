@@ -9,12 +9,14 @@
             <FormEdit
               :name="item.name"
               :description="item.description"
+              @form-state="handleFormState"
               @input-name="handleInputName($event, index)"
               @input-description="handleInputDescription($event, index)"
             />
             <button
               class="beer__button"
               type="button"
+              :disabled="isDisabled"
               @click="handleDeleteItem(index)"
             >
               Delete
@@ -50,6 +52,7 @@ export default {
       beerOffset: 0,
       isPendingBeerList: false,
       isError: false,
+      isDisabled: false,
     }
   },
   computed: {
@@ -91,6 +94,9 @@ export default {
     handleInputDescription(value, index) {
       const newItem = { ...this.beerList[index], description: value }
       this.$set(this.beerList, index, newItem)
+    },
+    handleFormState(value) {
+      this.isDisabled = value
     },
   },
 }
@@ -157,6 +163,11 @@ export default {
   color: #3b8070;
   text-decoration: none;
   padding: 10px 30px;
+}
+
+.beer__button:disabled {
+  color: #7f828b;
+  border-color: #7f828b;
 }
 
 .beer__button:hover:not(:disabled) {

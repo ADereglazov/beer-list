@@ -4,7 +4,7 @@
       class="form__button"
       type="button"
       :disabled="isOpened"
-      @click="isOpened = true"
+      @click="handleFormState(true)"
     >
       Edit
     </button>
@@ -20,7 +20,7 @@
         class="form__field"
         name="description"
       ></textarea>
-      <button class="form__close" type="button" @click="isOpened = false">
+      <button class="form__close" type="button" @click="handleFormState(false)">
         Close
       </button>
     </form>
@@ -63,6 +63,12 @@ export default {
       set(value) {
         this.$emit('input-description', value)
       },
+    },
+  },
+  methods: {
+    handleFormState(value) {
+      this.isOpened = value
+      this.$emit('form-state', value)
     },
   },
 }
