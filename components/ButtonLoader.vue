@@ -1,7 +1,7 @@
 <template>
   <button
     :class="{ loading: pending }"
-    class="button-more"
+    class="button-next"
     :disabled="pending"
     type="button"
     @click="$emit('click-load-more')"
@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style>
-.button-more {
+.button-next {
   display: inline-block;
   border-radius: 4px;
   border: 1px solid #3b8070;
@@ -38,13 +38,13 @@ export default {
   padding: 10px 30px;
 }
 
-.button-more:hover:not(:disabled) {
+.button-next:hover:not(:disabled) {
   color: #fff;
   background-color: #3b8070;
   cursor: pointer;
 }
 
-.button-more:active:not(:disabled) {
+.button-next:active:not(:disabled) {
   opacity: 0.5;
 }
 </style>

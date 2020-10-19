@@ -26,7 +26,7 @@
         />
       </LoaderWrapper>
     </div>
-    <span v-else>Oops... no data found</span>
+    <span v-else-if="isError">Oops... no data found</span>
   </div>
 </template>
 
@@ -34,28 +34,32 @@
 import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
 
+const FIRST_PAGE_NUMBER = 1
+const BEER_ITEMS_LIMIT = 25
+
 export default {
   components: { ButtonLoader, LoaderWrapper },
-  fetch() {
-    this.getData({
-      page: this.page,
-      limit: this.limit,
-    })
-  },
   data() {
     return {
-      page: 1,
-      limit: 25,
+      page: FIRST_PAGE_NUMBER,
+      limit: BEER_ITEMS_LIMIT,
       beerList: [],
       beerCount: 0,
       beerOffset: 0,
       isPendingBeerList: false,
+      isError: false,
     }
   },
   computed: {
     isBeerAvailable() {
       return this.beerOffset <= this.beerCount
     },
+  },
+  mounted() {
+    this.getData({
+      page: FIRST_PAGE_NUMBER,
+      limit: BEER_ITEMS_LIMIT,
+    })
   },
   methods: {
     getData(params) {
@@ -68,6 +72,9 @@ export default {
           this.beerCount += count
           this.beerOffset += this.limit
           this.page++
+        })
+        .catch(() => {
+          this.isError = true
         })
         .finally(() => {
           this.isPendingBeerList = false
@@ -132,6 +139,26 @@ export default {
   width: auto;
   height: 200px;
   margin: 10px auto;
+}
+
+.beer__button {
+  display: inline-block;
+  width: 100px;
+  border-radius: 4px;
+  border: 1px solid #3b8070;
+  color: #3b8070;
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+.beer__button:hover:not(:disabled) {
+  color: #fff;
+  background-color: #3b8070;
+  cursor: pointer;
+}
+
+.beer__button:active:not(:disabled) {
+  opacity: 0.5;
 }
 
 .beer__description {
