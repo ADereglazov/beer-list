@@ -47,7 +47,6 @@ export default {
   data() {
     return {
       beerList: [],
-      beerCount: 0,
       beerOffset: 0,
       isPendingBeerList: false,
       isError: false,
@@ -55,7 +54,7 @@ export default {
   },
   computed: {
     isBeerAvailable() {
-      return this.beerOffset <= this.beerCount
+      return this.beerOffset <= this.beerList.length
     },
   },
   mounted() {
@@ -70,7 +69,6 @@ export default {
         .$get('https://api.punkapi.com/v2/beers', { params })
         .then((response) => {
           this.beerList.push(...response)
-          this.beerCount += response.length
           this.beerOffset += BEER_ITEMS_LIMIT
         })
         .catch(() => {
@@ -136,6 +134,10 @@ export default {
 .beer__title {
   font-size: 16px;
   font-weight: bold;
+}
+
+.beer__wrapper {
+  margin-bottom: 10px;
 }
 
 .beer__img {
