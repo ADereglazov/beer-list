@@ -2,9 +2,19 @@
   <div class="container">
     <div v-if="beerList.length > 0" class="beer">
       <ul class="beer__list">
-        <li v-for="item in beerList" :key="item.id" class="beer__item">
+        <li v-for="(item, index) in beerList" :key="item.id" class="beer__item">
           <p class="beer__title">{{ item.id }}. {{ item.name }}</p>
-          <img :src="item.image_url" :alt="item.name" class="beer__img" />
+          <div class="beer__wrapper">
+            <img :src="item.image_url" :alt="item.name" class="beer__img" />
+            <button class="beer__button" type="button">Edit</button>
+            <button
+              class="beer__button"
+              type="button"
+              @click="handleDeleteItem(index)"
+            >
+              Delete
+            </button>
+          </div>
           <p class="beer__description">{{ item.description }}</p>
           <p class="beer__tips">{{ item.brewers_tips }}</p>
         </li>
@@ -12,7 +22,7 @@
       <LoaderWrapper v-if="isBeerAvailable">
         <ButtonLoader
           :pending="isPendingBeerList"
-          @click-load-more="handleLoadMoreClick(page, limit)"
+          @click-load-more="handleShowNextClick"
         />
       </LoaderWrapper>
     </div>
@@ -27,24 +37,10 @@ import LoaderWrapper from '~/components/LoaderWrapper'
 export default {
   components: { ButtonLoader, LoaderWrapper },
   fetch() {
-    const params = {
+    this.getData({
       page: this.page,
       limit: this.limit,
-    }
-
-    this.isPendingBeerList = true
-    return this.$axios
-      .$get('https://api.punkapi.com/v2/beers', { params })
-      .then((response) => {
-        const count = response.length
-        this.beerList.push(...response)
-        this.beerCount += count
-        this.beerOffset += this.limit
-        this.page++
-      })
-      .finally(() => {
-        this.isPendingBeerList = false
-      })
+    })
   },
   data() {
     return {
@@ -62,12 +58,7 @@ export default {
     },
   },
   methods: {
-    handleLoadMoreClick(page, limit) {
-      const params = {
-        page,
-        limit,
-      }
-
+    getData(params) {
       this.isPendingBeerList = true
       return this.$axios
         .$get('https://api.punkapi.com/v2/beers', { params })
@@ -75,12 +66,21 @@ export default {
           const count = response.length
           this.beerList.push(...response)
           this.beerCount += count
-          this.beerOffset += limit
+          this.beerOffset += this.limit
           this.page++
         })
         .finally(() => {
           this.isPendingBeerList = false
         })
+    },
+    handleShowNextClick() {
+      this.getData({
+        page: this.page,
+        limit: this.limit,
+      })
+    },
+    handleDeleteItem(index) {
+      this.beerList.splice(index, 1)
     },
   },
 }
@@ -88,6 +88,10 @@ export default {
 
 <style>
 .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
@@ -119,7 +123,6 @@ export default {
 }
 
 .beer__title {
-  margin-bottom: 10px;
   font-size: 16px;
   font-weight: bold;
 }
@@ -128,7 +131,7 @@ export default {
   display: block;
   width: auto;
   height: 200px;
-  margin-bottom: 10px;
+  margin: 10px auto;
 }
 
 .beer__description {
