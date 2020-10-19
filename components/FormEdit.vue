@@ -1,6 +1,11 @@
 <template>
   <div class="form">
-    <button class="beer__button" type="button" @click="isOpened = true">
+    <button
+      class="form__button"
+      type="button"
+      :disabled="isOpened"
+      @click="isOpened = true"
+    >
       Edit
     </button>
     <form v-if="isOpened" class="form__form">
@@ -80,6 +85,34 @@ export default {
   left: 0;
   background-color: #fff;
   box-shadow: 0 7px 15px 0 rgba(0, 1, 1, 0.15);
+}
+
+.form__button,
+.form__close {
+  display: inline-block;
+  width: 100px;
+  border-radius: 4px;
+  border: 1px solid #3b8070;
+  color: #3b8070;
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+.form__button:disabled {
+  color: #7f828b;
+  border-color: #7f828b;
+}
+
+.form__button:hover:not(:disabled),
+.form__close:hover:not(:disabled) {
+  color: #fff;
+  background-color: #3b8070;
+  cursor: pointer;
+}
+
+.form__button:active:not(:disabled),
+.form__close:active:not(:disabled) {
+  opacity: 0.5;
 }
 
 .form__field {
