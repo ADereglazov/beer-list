@@ -1,12 +1,22 @@
 <template>
   <div class="container">
-    <h1 class="title">beer-list</h1>
-    <LoaderWrapper v-if="$store.getters['beer/isBeerAvailable']">
-      <ButtonLoader
-        :pending="$store.state.beer.isPendingBeerList"
-        @click-load-more="handleLoadMoreClick"
-      />
-    </LoaderWrapper>
+    <div v-if="beerList.length > 0" class="beer">
+      <ul class="beer__list">
+        <li v-for="item in beerList" :key="item.id" class="beer__item">
+          <p class="beer__title">{{ item.id }}. {{ item.name }}</p>
+          <img :src="item.image_url" :alt="item.name" class="beer__img" />
+          <p class="beer__description">{{ item.description }}</p>
+          <p class="beer__tips">{{ item.brewers_tips }}</p>
+        </li>
+      </ul>
+      <LoaderWrapper v-if="isBeerAvailable">
+        <ButtonLoader
+          :pending="isPendingBeerList"
+          @click-load-more="handleLoadMoreClick(page, limit)"
+        />
+      </LoaderWrapper>
+    </div>
+    <span v-else>Oops... no data found</span>
   </div>
 </template>
 
@@ -14,37 +24,63 @@
 import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
 
-const BEER_LIST_LIMIT = 5
-
 export default {
   components: { ButtonLoader, LoaderWrapper },
-  /*
-  fetch(store) {
-    const promises = []
-
-    if (store.state.beer.beerOffset < BEER_LIST_LIMIT) {
-      promises.push(
-        store.dispatch('beer/FETCH_BEER_LIST', {
-          page: 1,
-          limit: BEER_LIST_LIMIT,
-        })
-      )
+  fetch() {
+    const params = {
+      page: this.page,
+      limit: this.limit,
     }
 
-    if (promises.length === 0) {
-      return null
+    this.isPendingBeerList = true
+    return this.$axios
+      .$get('https://api.punkapi.com/v2/beers', { params })
+      .then((response) => {
+        const count = response.length
+        this.beerList.push(...response)
+        this.beerCount += count
+        this.beerOffset += this.limit
+        this.page++
+      })
+      .finally(() => {
+        this.isPendingBeerList = false
+      })
+  },
+  data() {
+    return {
+      page: 1,
+      limit: 25,
+      beerList: [],
+      beerCount: 0,
+      beerOffset: 0,
+      isPendingBeerList: false,
     }
   },
-  */
+  computed: {
+    isBeerAvailable() {
+      return this.beerOffset <= this.beerCount
+    },
+  },
   methods: {
-    handleLoadMoreClick() {
-      if (this.$store.state.beer.isPendingBeerList) {
-        return
+    handleLoadMoreClick(page, limit) {
+      const params = {
+        page,
+        limit,
       }
-      this.$store.dispatch('beer/FETCH_BEER_LIST', {
-        page: 1,
-        limit: BEER_LIST_LIMIT,
-      })
+
+      this.isPendingBeerList = true
+      return this.$axios
+        .$get('https://api.punkapi.com/v2/beers', { params })
+        .then((response) => {
+          const count = response.length
+          this.beerList.push(...response)
+          this.beerCount += count
+          this.beerOffset += limit
+          this.page++
+        })
+        .finally(() => {
+          this.isPendingBeerList = false
+        })
     },
   },
 }
@@ -53,7 +89,11 @@ export default {
 <style>
 .container {
   margin: 0 auto;
+  padding: 20px;
   min-height: 100vh;
+}
+
+.beer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -61,13 +101,45 @@ export default {
   text-align: center;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+.beer__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.beer__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  border-bottom: 1px solid black;
+}
+
+.beer__title {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.beer__img {
   display: block;
-  font-weight: 300;
-  font-size: 60px;
-  color: #35495e;
-  letter-spacing: 1px;
+  width: auto;
+  height: 200px;
+  margin-bottom: 10px;
+}
+
+.beer__description {
+  margin-bottom: 10px;
+  font-style: italic;
+  text-align: justify;
+}
+
+.beer__tips {
+  margin-bottom: 10px;
+  text-align: justify;
+  color: blue;
 }
 </style>
