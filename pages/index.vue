@@ -6,7 +6,12 @@
           <p class="beer__title">{{ item.id }}. {{ item.name }}</p>
           <div class="beer__wrapper">
             <img :src="item.image_url" :alt="item.name" class="beer__img" />
-            <button class="beer__button" type="button">Edit</button>
+            <FormEdit
+              :name="item.name"
+              :description="item.description"
+              @input-name="handleInputName"
+              @input-description="handleInputDescription"
+            />
             <button
               class="beer__button"
               type="button"
@@ -22,7 +27,7 @@
       <LoaderWrapper v-if="isBeerAvailable">
         <ButtonLoader
           :pending="isPendingBeerList"
-          @click-load-more="handleShowNextClick"
+          @show-next="handleShowNextClick"
         />
       </LoaderWrapper>
     </div>
@@ -33,12 +38,14 @@
 <script>
 import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
+import FormEdit from '~/components/FormEdit'
+// import FormContainer from '~/components/FormContainer'
 
 const FIRST_PAGE_NUMBER = 1
 const BEER_ITEMS_LIMIT = 25
 
 export default {
-  components: { ButtonLoader, LoaderWrapper },
+  components: { FormEdit, ButtonLoader, LoaderWrapper },
   data() {
     return {
       page: FIRST_PAGE_NUMBER,
@@ -89,6 +96,12 @@ export default {
     handleDeleteItem(index) {
       this.beerList.splice(index, 1)
     },
+    handleInputName(value) {
+      console.log('>>>>>>>>>>>>>>>', value)
+    },
+    handleInputDescription(value) {
+      console.log('>>>>>>>>>>>>>>>', value)
+    },
   },
 }
 </script>
@@ -110,6 +123,10 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+.beer__wrapper {
+  position: relative;
 }
 
 .beer__list {

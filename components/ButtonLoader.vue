@@ -4,7 +4,7 @@
     class="button-next"
     :disabled="pending"
     type="button"
-    @click="$emit('click-load-more')"
+    @click="$emit('show-next')"
   >
     {{ buttonContent }}
   </button>
