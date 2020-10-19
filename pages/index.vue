@@ -85,10 +85,12 @@ export default {
       this.beerList.splice(index, 1)
     },
     handleInputName(value, index) {
-      this.beerList[index].name = value
+      const newItem = { ...this.beerList[index], name: value }
+      this.$set(this.beerList, index, newItem)
     },
     handleInputDescription(value, index) {
-      this.beerList[index].description = value
+      const newItem = { ...this.beerList[index], description: value }
+      this.$set(this.beerList, index, newItem)
     },
   },
 }
