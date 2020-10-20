@@ -50,6 +50,7 @@ export default {
     return {
       beerList: [],
       beerOffset: 0,
+      beerCount: 0,
       isPendingBeerList: false,
       isError: false,
       isDisabled: false,
@@ -57,7 +58,7 @@ export default {
   },
   computed: {
     isBeerAvailable() {
-      return this.beerOffset <= this.beerList.length
+      return this.beerOffset <= this.beerCount
     },
   },
   mounted() {
@@ -72,6 +73,7 @@ export default {
         .$get('https://api.punkapi.com/v2/beers', { params })
         .then((response) => {
           this.beerList.push(...response)
+          this.beerCount += response.length
           this.beerOffset += BEER_ITEMS_LIMIT
         })
         .catch(() => {
