@@ -4,9 +4,17 @@
       class="form__button"
       type="button"
       :disabled="isOpened"
-      @click="handleFormState(true)"
+      @click="isOpened = true"
     >
       Edit
+    </button>
+    <button
+      class="form__button"
+      type="button"
+      :disabled="isOpened"
+      @click="$emit('item-delete')"
+    >
+      Delete
     </button>
     <form v-if="isOpened" class="form__form">
       <textarea
@@ -20,7 +28,7 @@
         class="form__field"
         name="description"
       ></textarea>
-      <button class="form__close" type="button" @click="handleFormState(false)">
+      <button class="form__close" type="button" @click="isOpened = false">
         Close
       </button>
     </form>
@@ -63,12 +71,6 @@ export default {
       set(value) {
         this.$emit('input-description', value)
       },
-    },
-  },
-  methods: {
-    handleFormState(value) {
-      this.isOpened = value
-      this.$emit('form-state', value)
     },
   },
 }

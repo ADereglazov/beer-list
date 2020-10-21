@@ -4,24 +4,15 @@
       <ul class="beer__list">
         <li v-for="(item, index) in beerList" :key="item.id" class="beer__item">
           <p class="beer__title">{{ item.id }}. {{ item.name }}</p>
-          <div class="beer__wrapper">
-            <img :src="item.image_url" :alt="item.name" class="beer__img" />
-            <FormEdit
-              :name="item.name"
-              :description="item.description"
-              @form-state="handleFormState"
-              @input-name="handleInputName($event, index)"
-              @input-description="handleInputDescription($event, index)"
-            />
-            <button
-              class="beer__button"
-              type="button"
-              :disabled="isDisabled"
-              @click="handleDeleteItem(index)"
-            >
-              Delete
-            </button>
-          </div>
+          <img :src="item.image_url" :alt="item.name" class="beer__img" />
+          <FormEdit
+            :name="item.name"
+            :description="item.description"
+            class="beer__form"
+            @input-name="handleInputName($event, index)"
+            @input-description="handleInputDescription($event, index)"
+            @item-delete="handleDeleteItem(index)"
+          />
           <p class="beer__description">{{ item.description }}</p>
           <p class="beer__tips">{{ item.brewers_tips }}</p>
         </li>
@@ -53,7 +44,6 @@ export default {
       beerCount: 0,
       isPendingBeerList: false,
       isError: false,
-      isDisabled: false,
     }
   },
   computed: {
@@ -96,9 +86,6 @@ export default {
     handleInputDescription(value, index) {
       const newItem = { ...this.beerList[index], description: value }
       this.$set(this.beerList, index, newItem)
-    },
-    handleFormState(value) {
-      this.isDisabled = value
     },
   },
 }
@@ -146,10 +133,6 @@ export default {
   font-weight: bold;
 }
 
-.beer__wrapper {
-  margin-bottom: 10px;
-}
-
 .beer__img {
   display: block;
   width: auto;
@@ -157,29 +140,8 @@ export default {
   margin: 10px auto;
 }
 
-.beer__button {
-  display: inline-block;
-  width: 100px;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.beer__button:disabled {
-  color: #7f828b;
-  border-color: #7f828b;
-}
-
-.beer__button:hover:not(:disabled) {
-  color: #fff;
-  background-color: #3b8070;
-  cursor: pointer;
-}
-
-.beer__button:active:not(:disabled) {
-  opacity: 0.5;
+.beer__form {
+  margin-bottom: 10px;
 }
 
 .beer__description {
