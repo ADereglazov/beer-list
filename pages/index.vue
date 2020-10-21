@@ -24,7 +24,7 @@
         />
       </LoaderWrapper>
     </div>
-    <span v-else-if="isError">Oops... Error occured</span>
+    <span v-else-if="isError">Oops... Error occurred</span>
   </div>
 </template>
 
