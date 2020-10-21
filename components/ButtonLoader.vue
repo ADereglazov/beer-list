@@ -1,6 +1,5 @@
 <template>
   <button
-    :class="{ loading: pending }"
     class="button-next"
     :disabled="pending"
     type="button"
@@ -36,6 +35,11 @@ export default {
   color: #3b8070;
   text-decoration: none;
   padding: 10px 30px;
+}
+
+.button-next:disabled {
+  color: #7f828b;
+  border-color: #7f828b;
 }
 
 .button-next:hover:not(:disabled) {
