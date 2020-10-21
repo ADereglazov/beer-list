@@ -12,11 +12,11 @@
       class="form__button"
       type="button"
       :disabled="isOpened"
-      @click="$emit('item-delete')"
+      @click="$emit('delete-item')"
     >
       Delete
     </button>
-    <form v-if="isOpened" class="form__form">
+    <form v-if="isOpened" v-click-outside="close" class="form__form">
       <textarea
         v-model="valueNameModel"
         class="form__field"
@@ -28,16 +28,19 @@
         class="form__field"
         name="description"
       ></textarea>
-      <button class="form__close" type="button" @click="isOpened = false">
-        Close
-      </button>
+      <button class="form__close" type="button" @click="close">Close</button>
     </form>
   </div>
 </template>
 
 <script>
+import vClickOutside from 'v-click-outside'
+
 export default {
   name: 'FormEdit',
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
   props: {
     name: {
       type: String,
@@ -71,6 +74,30 @@ export default {
       set(value) {
         this.$emit('input-description', value)
       },
+    },
+  },
+  mounted() {
+    document.addEventListener('keydown', this.handleKeydown, false)
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeydown, false)
+  },
+  methods: {
+    close() {
+      if (!this.isOpened) {
+        return
+      }
+      this.isOpened = false
+    },
+    handleKeydown(e) {
+      if (this.isEscape(e)) {
+        this.close()
+      }
+    },
+    isEscape(e) {
+      // key = 'Esc' for IE9/IE11
+      // https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key/Key_Values
+      return ['Escape', 'Esc'].some((value) => e.key === value)
     },
   },
 }

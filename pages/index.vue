@@ -11,7 +11,7 @@
             class="beer__form"
             @input-name="handleInputName($event, index)"
             @input-description="handleInputDescription($event, index)"
-            @item-delete="handleDeleteItem(index)"
+            @delete-item="handleDeleteItem(index)"
           />
           <p class="beer__description">{{ item.description }}</p>
           <p class="beer__tips">{{ item.brewers_tips }}</p>
