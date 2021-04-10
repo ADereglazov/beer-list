@@ -24,7 +24,12 @@
         />
       </LoaderWrapper>
     </div>
-    <span v-else-if="isError">Oops... Error occurred</span>
+    <div v-else-if="isError" class="beer__error">
+      <span>Oops... Error occurred</span>
+      <button class="beer__error-button" type="button" @click="getData">
+        Try again
+      </button>
+    </div>
   </div>
 </template>
 
@@ -154,5 +159,31 @@ export default {
   margin-bottom: 10px;
   text-align: justify;
   color: blue;
+}
+
+.beer__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.beer__error-button {
+  width: 130px;
+  padding: 10px 30px;
+  margin-top: 10px;
+  border-radius: 4px;
+  border: 1px solid #3b8070;
+  color: #3b8070;
+  text-decoration: none;
+}
+
+.beer__error-button:hover {
+  color: #fff;
+  background-color: #3b8070;
+  cursor: pointer;
+}
+
+.beer__error-button:active {
+  opacity: 0.5;
 }
 </style>
