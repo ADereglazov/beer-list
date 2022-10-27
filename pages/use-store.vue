@@ -42,18 +42,18 @@ const BEER_ITEMS_LIMIT = 25
 
 export default {
   components: { FormEdit, ButtonLoader, LoaderWrapper },
-  data() {
-    return {
-      beerList: [],
-      beerOffset: 0,
-      beerCount: 0,
-      isPendingBeerList: false,
-      isError: false,
-    }
-  },
   computed: {
+    beerList() {
+      return this.$store.state.beerList
+    },
     isBeerAvailable() {
-      return this.beerOffset <= this.beerCount
+      return this.$store.getters.isBeerAvailable
+    },
+    isPendingBeerList() {
+      return this.$store.state.isPendingBeerList
+    },
+    isError() {
+      return this.$store.state.isError
     },
   },
   mounted() {
@@ -61,36 +61,21 @@ export default {
   },
   methods: {
     getData() {
-      const page = Math.trunc(this.beerOffset / BEER_ITEMS_LIMIT) + 1
-      const params = { page, limit: BEER_ITEMS_LIMIT }
-      this.isPendingBeerList = true
-      return this.$axios
-        .$get('https://api.punkapi.com/v2/beers', { params })
-        .then((response) => {
-          this.beerList.push(...response)
-          this.beerCount += response.length
-          this.beerOffset += BEER_ITEMS_LIMIT
-        })
-        .catch(() => {
-          this.isError = true
-        })
-        .finally(() => {
-          this.isPendingBeerList = false
-        })
+      const page =
+        Math.trunc(this.$store.state.beerOffset / BEER_ITEMS_LIMIT) + 1
+      this.$store.dispatch('FETCH_BEER_LIST', { page, limit: BEER_ITEMS_LIMIT })
     },
     handleShowNextClick() {
       this.getData()
     },
     handleDeleteItem(index) {
-      this.beerList.splice(index, 1)
+      this.$store.commit('DELETE_BEER_LIST_ITEM', index)
     },
     handleEditName(value, index) {
-      const newItem = { ...this.beerList[index], name: value }
-      this.$set(this.beerList, index, newItem)
+      this.$store.commit('EDIT_BEER_LIST_ITEM_NAME', { value, index })
     },
     handleEditDescription(value, index) {
-      const newItem = { ...this.beerList[index], description: value }
-      this.$set(this.beerList, index, newItem)
+      this.$store.commit('EDIT_BEER_LIST_ITEM_DESCRIPTION', { value, index })
     },
   },
 }

@@ -64,7 +64,7 @@ export default {
         return this.name
       },
       set(value) {
-        this.$emit('input-name', value)
+        this.$emit('edit-name', value)
       },
     },
     valueDescriptionModel: {
@@ -72,7 +72,7 @@ export default {
         return this.description
       },
       set(value) {
-        this.$emit('input-description', value)
+        this.$emit('edit-description', value)
       },
     },
   },
