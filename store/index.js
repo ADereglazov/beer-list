@@ -37,7 +37,7 @@ export default {
     },
 
     UPDATE_BEER_COUNT(state, value) {
-      Vue.set(state, 'beerCount', value)
+      Vue.set(state, 'beerCount', state.beerCount + value)
     },
 
     EDIT_BEER_LIST_ITEM_NAME(state, { value, index }) {
