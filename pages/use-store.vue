@@ -9,8 +9,8 @@
             :name="item.name"
             :description="item.description"
             class="beer__form"
-            @edit-name="handleEditName($event, index)"
-            @edit-description="handleEditDescription($event, index)"
+            @edit-name="handleEditName({ value: $event, index })"
+            @edit-description="handleEditDescription({ value: $event, index })"
             @delete-item="handleDeleteItem(index)"
           />
           <p class="beer__description">{{ item.description }}</p>
@@ -18,10 +18,7 @@
         </li>
       </ul>
       <LoaderWrapper v-if="isBeerAvailable">
-        <ButtonLoader
-          :pending="isPendingBeerList"
-          @show-next="handleShowNextClick"
-        />
+        <ButtonLoader :pending="pending" @show-next="handleShowNextClick" />
       </LoaderWrapper>
     </div>
     <div v-else-if="isError" class="beer__error">
@@ -34,6 +31,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import ButtonLoader from '~/components/ButtonLoader'
 import LoaderWrapper from '~/components/LoaderWrapper'
 import FormEdit from '~/components/FormEdit'
@@ -43,17 +41,14 @@ const BEER_ITEMS_LIMIT = 25
 export default {
   components: { FormEdit, ButtonLoader, LoaderWrapper },
   computed: {
-    beerList() {
-      return this.$store.state.beerList
-    },
+    ...mapState({
+      beerList: 'beerList',
+      beerOffset: 'beerOffset',
+      pending: 'isPendingBeerList',
+      isError: 'isError',
+    }),
     isBeerAvailable() {
       return this.$store.getters.isBeerAvailable
-    },
-    isPendingBeerList() {
-      return this.$store.state.isPendingBeerList
-    },
-    isError() {
-      return this.$store.state.isError
     },
   },
   mounted() {
@@ -61,22 +56,17 @@ export default {
   },
   methods: {
     getData() {
-      const page =
-        Math.trunc(this.$store.state.beerOffset / BEER_ITEMS_LIMIT) + 1
+      const page = Math.trunc(this.beerOffset / BEER_ITEMS_LIMIT) + 1
       this.$store.dispatch('FETCH_BEER_LIST', { page, limit: BEER_ITEMS_LIMIT })
     },
     handleShowNextClick() {
       this.getData()
     },
-    handleDeleteItem(index) {
-      this.$store.commit('DELETE_BEER_LIST_ITEM', index)
-    },
-    handleEditName(value, index) {
-      this.$store.commit('EDIT_BEER_LIST_ITEM_NAME', { value, index })
-    },
-    handleEditDescription(value, index) {
-      this.$store.commit('EDIT_BEER_LIST_ITEM_DESCRIPTION', { value, index })
-    },
+    ...mapMutations({
+      handleDeleteItem: 'DELETE_BEER_LIST_ITEM',
+      handleEditName: 'EDIT_BEER_LIST_ITEM_NAME',
+      handleEditDescription: 'EDIT_BEER_LIST_ITEM_DESCRIPTION',
+    }),
   },
 }
 </script>
