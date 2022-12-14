@@ -18,10 +18,7 @@
         </li>
       </ul>
       <LoaderWrapper v-if="isBeerAvailable">
-        <ButtonLoader
-          :pending="isPendingBeerList"
-          @show-next="handleShowNextClick"
-        />
+        <ButtonLoader :pending="pending" @show-next="handleShowNextClick" />
       </LoaderWrapper>
     </div>
     <div v-else-if="isError" class="beer__error">
@@ -47,7 +44,7 @@ export default {
       beerList: [],
       beerOffset: 0,
       beerCount: 0,
-      isPendingBeerList: false,
+      pending: false,
       isError: false,
     }
   },
@@ -63,7 +60,7 @@ export default {
     getData() {
       const page = Math.trunc(this.beerOffset / BEER_ITEMS_LIMIT) + 1
       const params = { page, limit: BEER_ITEMS_LIMIT }
-      this.isPendingBeerList = true
+      this.pending = true
       return this.$axios
         .$get('https://api.punkapi.com/v2/beers', { params })
         .then((response) => {
@@ -75,7 +72,7 @@ export default {
           this.isError = true
         })
         .finally(() => {
-          this.isPendingBeerList = false
+          this.pending = false
         })
     },
     handleShowNextClick() {
